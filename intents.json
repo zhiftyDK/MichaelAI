@@ -11,7 +11,7 @@
                 "Good day"
             ],
             "responses": [
-                "Hey :-)",
+                "Hey",
                 "Hello, thanks for visiting",
                 "Hi there, what can I do for you?",
                 "Hi there, how can I help?"
@@ -26,6 +26,21 @@
             "responses": [
                 "goodbye sir"
             ]
+        },
+        {
+            "tag": "_location",
+            "patterns": [
+                "i live in",
+                "i am from"
+            ],
+            "responses": [
+                "Glad to meet someone from {}, i love the people there",
+                "Glad to meet someone from {}"
+            ]
+        },
+        {
+            "tag": "moondistance",
+            "patterns": []
         }
     ]
 }
