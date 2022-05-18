@@ -11,9 +11,9 @@
 
     <script src="./chatbot.js"></script>
     <script>
-        function trainBOT(){
+        function trainBOT() {
             const bot = new chatBot();
-            bot.run("./model.json", "I live in silkeborg");
+            bot.train("./intents.json", "./model.json");
         }
     </script>
 </body>

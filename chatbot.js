@@ -9612,47 +9612,132 @@ var stemmer = (function(){
 	}
 })();
 
+//Tokenize algorithm
+function tokenize(input) {
+    return input.split(" ");
+}
+
+//Bag of words
+function bag_of_words(tokenized_sentence, words) {
+    // stem each word
+    let sentence_words = [];
+    tokenized_sentence.forEach(w => {
+        sentence_words.push(stemmer(w).toLowerCase());
+    });
+    
+    //initialize bag with 0 for each word
+    let bag = [];
+    words.forEach(() => {
+        bag.push(0);
+    });
+    for (let i = 0; i < words.length; i++) {
+        let w = words[i];
+        if(sentence_words.includes(w)){
+            bag[i] = 1;
+        }
+    }
+    return bag;
+}
+
 //Chatbot class
 class chatBot {
-    //Constructor for training the neural network
-    train(intentsFile, download){
-        const trainingData = [];
+    train(intentsFile, modelFile) {
         fetch(intentsFile)
         .then(response => response.json())
         .then(data => {
             const intents = data.intents;
-            let intentsArray = [];
-            for (let i = 0; i < intents.length; i++) {
-                const intent = intents[i];
+            
+            // loop through each sentence in our intents patterns
+            let all_words = [];
+            let tags = [];
+            let xy = [];
+            intents.forEach(intent => {
+                let tag = intent.tag;
+                // add to tag list
+                tags.push(tag);
                 intent.patterns.forEach(pattern => {
-                    trainingData.push({input: pattern, output: intent.tag});
+                    // tokenize each word in the sentence
+                    let w = tokenize(pattern);
+                    // add to our words list
+                    all_words = all_words.concat(w);
+                    // add to xy pair
+                    xy.push({w, tag});
                 });
-                if(i == intents.length - 1){
-                    console.log(trainingData);
-                    const net = new brain.recurrent.LSTM({
-                        activation: "relu",
-                        hiddenLayers: [8, 8]
-                    });
-                    net.train(trainingData, {
-                        iterations: 20000,
-                        log: stats => {
-                            console.log(stats);
-                        }
-                    });  
-                    if(download == true) {
-                        const trainedModel = net.toJSON();
-                        const blob = new Blob([JSON.stringify(trainedModel)], {type: 'application/json'});
-                        const url = URL.createObjectURL(blob);
-                        const a = Object.assign(document.createElement('a'), {download: 'model.json', href: url});
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                    } else {
-                        const trainedModel = net.toJSON();
-                        console.log(trainedModel);
-                    }
+            });
+
+            // stem and lower each word
+            let ignore_words = ["?", ".", "!"];
+            let temp = [];
+            all_words.forEach(w => {
+                if(!ignore_words.includes(w)){
+                    temp.push(stemmer(w).toLowerCase());
                 }
+            });
+            all_words = temp;
+
+            // remove duplicates and sort
+            all_words = [...new Set(all_words.sort())];
+            tags = [...new Set(tags.sort())];
+
+            console.log(xy.length, "patterns");
+            console.log(tags.length, "tags:", tags);
+            console.log(all_words.length, "unique stemmed words:", all_words);
+
+            // Create training data
+            let trainingData = [];
+            let tempOutputOneHot = [];
+            // For output were gonna use one-hot encoding
+            for (let i = 0; i < intents.length; i++) {
+                const element = intents[i];
+                let one_hot = [];
+                intents.forEach(() => {
+                    one_hot.push(0);
+                });
+                one_hot[i] = 1;
+                tempOutputOneHot.push([one_hot, element.tag]);
             }
+
+            // bag of words for each pattern_sentence
+            xy.forEach(element => {
+                let pattern_sentence = element.w
+                let tag = element.tag
+                let bag = bag_of_words(pattern_sentence, all_words);
+                // Get temp values match with tag and combine with bag values
+                tempOutputOneHot.forEach(element => {
+                    if(tag == element[1]) {
+                        trainingData.push({input: bag, output: element[0]});
+                    }
+                });
+            });
+
+            //Create and configure neural network
+            const net = new brain.NeuralNetwork({
+                activation: "relu",
+                inputSize: all_words.length,
+                outputSize: tags.length,
+                learningRate: 0.001,
+                hiddenLayers: [8, 8, 8, 8, 8, 8, 8, 8]
+            });
+            //If existing model then train untop of this model
+            if(typeof modelFile !== "undefined"){
+                let jsonModel;
+                fetch(modelFile)
+                .then(response => response.json())
+                .then(data => {
+                    net.fromJSON(data);
+                });
+            }
+            //Train model
+            net.train(trainingData, {
+                log: true
+            });
+            const trainedModel = net.toJSON();
+            const blob = new Blob([JSON.stringify(trainedModel)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = Object.assign(document.createElement('a'), {download: 'model.json', href: url});
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
         });
     }
 
