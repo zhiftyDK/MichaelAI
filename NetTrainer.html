@@ -7,54 +7,13 @@
     <title>NetTrainer</title>
 </head>
 <body>
-    <label for="trainProgress">Training progress:</label>
-    <progress id="trainProgress" value="0" max="20000"></progress>
-    <button onclick="train();">Train</button>
+    <button onclick="trainBOT()">Button</button>
 
-    <script src="//unpkg.com/brain.js"></script>
+    <script src="./chatbot.js"></script>
     <script>
-        function run(input) {
-            fetch("./model.json")
-            .then(response => response.json())
-            .then(data => {
-                const net = new brain.recurrent.LSTM();
-                net.fromJSON(data);
-                const output = net.run(input);
-                console.log(output);
-            });
-        }
-        
-        function train() {
-            const trainingData = [];
-            fetch("./intents.json")
-            .then(response => response.json())
-            .then(data => {
-                const intents = data.intents;
-                let intentsArray = [];
-                for (let i = 0; i < intents.length; i++) {
-                    const intent = intents[i];
-                    intent.patterns.forEach(pattern => {
-                        trainingData.push({input: pattern, output: intent.tag});
-                    });
-                    if(i == intents.length - 1){
-                        console.log(trainingData);
-                        const net = new brain.recurrent.LSTM();
-                        net.train(trainingData, {
-                            iterations: 100000,
-                            log: stats => {
-                                console.log(stats);
-                            }
-                        });  
-                        const trainedModel = net.toJSON();
-                        const blob = new Blob([JSON.stringify(trainedModel)], {type: 'application/json'});
-                        const url = URL.createObjectURL(blob);
-                        const a = Object.assign(document.createElement('a'), {download: 'model.json', href: url});
-                        document.body.appendChild(a);
-                        a.click();
-                    }
-                }
-            });
-            
+        function trainBOT(){
+            const bot = new chatBot();
+            bot.run("./model.json", "I live in silkeborg");
         }
     </script>
 </body>
