@@ -20,27 +20,23 @@
         {
             "tag": "goodbye",
             "patterns": [
-                "bye",
-                "goodbye"
+                "Bye",
+                "Goodbye"
             ],
             "responses": [
-                "goodbye sir"
+                "Goodbye sir"
             ]
         },
         {
             "tag": "_location",
             "patterns": [
-                "i live in",
-                "i am from"
+                "I live in",
+                "I am from"
             ],
             "responses": [
                 "Glad to meet someone from {}, i love the people there",
                 "Glad to meet someone from {}"
             ]
-        },
-        {
-            "tag": "moondistance",
-            "patterns": []
         }
     ]
 }

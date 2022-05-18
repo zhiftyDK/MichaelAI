@@ -7,15 +7,19 @@
     <title>NetTrainer</title>
 </head>
 <body>
+    <label for="trainProgress">Training progress:</label>
+    <progress id="trainProgress" value="0" max="20000"></progress>
+    <button onclick="train();">Train</button>
+
     <script src="//unpkg.com/brain.js"></script>
     <script>
-        function run() {
+        function run(input) {
             fetch("./model.json")
             .then(response => response.json())
             .then(data => {
                 const net = new brain.recurrent.LSTM();
                 net.fromJSON(data);
-                const output = net.run('The world is a terrible place!');
+                const output = net.run(input);
                 console.log(output);
             });
         }
@@ -33,12 +37,18 @@
                         trainingData.push({input: pattern, output: intent.tag});
                     });
                     if(i == intents.length - 1){
+                        console.log(trainingData);
                         const net = new brain.recurrent.LSTM();
-                        net.train(trainingData);
+                        net.train(trainingData, {
+                            iterations: 100000,
+                            log: stats => {
+                                console.log(stats);
+                            }
+                        });  
                         const trainedModel = net.toJSON();
                         const blob = new Blob([JSON.stringify(trainedModel)], {type: 'application/json'});
                         const url = URL.createObjectURL(blob);
-                        const a = Object.assign(document.createElement('a'), {download: 'new.json', href: url});
+                        const a = Object.assign(document.createElement('a'), {download: 'model.json', href: url});
                         document.body.appendChild(a);
                         a.click();
                     }
