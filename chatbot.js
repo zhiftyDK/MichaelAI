@@ -9639,10 +9639,23 @@ function bag_of_words(tokenized_sentence, words) {
     return bag;
 }
 
+//Check if file exists
+function checkFileExist(urlToFile) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('HEAD', urlToFile, false);
+    xhr.send();
+     
+    if (xhr.status == "404") {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 //Chatbot class
 class chatBot {
-    train(intentsFile, modelFile) {
-        fetch(intentsFile)
+    train() {
+        fetch("./intents.json")
         .then(response => response.json())
         .then(data => {
             const intents = data.intents;
@@ -9685,6 +9698,8 @@ class chatBot {
 
             // Create training data
             let trainingData = [];
+            let input = [];
+            let output = [];
             let tempOutputOneHot = [];
             // For output were gonna use one-hot encoding
             for (let i = 0; i < intents.length; i++) {
@@ -9705,6 +9720,8 @@ class chatBot {
                 // Get temp values match with tag and combine with bag values
                 tempOutputOneHot.forEach(element => {
                     if(tag == element[1]) {
+                        input.push(bag);
+                        output.push(element[0]);
                         trainingData.push({input: bag, output: element[0]});
                     }
                 });
@@ -9712,16 +9729,16 @@ class chatBot {
 
             //Create and configure neural network
             const net = new brain.NeuralNetwork({
-                activation: "relu",
-                inputSize: all_words.length,
-                outputSize: tags.length,
-                learningRate: 0.001,
-                hiddenLayers: [8, 8, 8, 8, 8, 8, 8, 8]
+                activation: "sigmoid",
+                iterations: 20000,
+                errorThresh: 0.0005,
+                log: true,
+                logPeriod: 100,
+                hiddenLayers: [8, 8],
             });
             //If existing model then train untop of this model
-            if(typeof modelFile !== "undefined"){
-                let jsonModel;
-                fetch(modelFile)
+            if(checkFileExist("./model.json") == true){
+                fetch("./model.json")
                 .then(response => response.json())
                 .then(data => {
                     net.fromJSON(data);
@@ -9742,14 +9759,55 @@ class chatBot {
     }
 
     //Constructor for running the neural network
-    run(modelFile, input) {
-        fetch(modelFile)
+    run(input) {
+        fetch("./intents.json")
         .then(response => response.json())
-        .then(data => {
-            const net = new brain.recurrent.LSTM();
-            net.fromJSON(data);
-            const output = net.run(input);
-            console.log(output);
+        .then(intentsData => {
+            const intents = intentsData.intents;
+
+            // loop through each sentence in our intents patterns
+            let all_words = [];
+            intents.forEach(intent => {
+                intent.patterns.forEach(pattern => {
+                    // tokenize each word in the sentence
+                    let w = tokenize(pattern);
+                    // add to our words list
+                    all_words = all_words.concat(w);
+                });
+            });
+
+            // stem and lower each word
+            let ignore_words = ["?", ".", "!"];
+            let temp = [];
+            all_words.forEach(w => {
+                if(!ignore_words.includes(w)){
+                    temp.push(stemmer(w).toLowerCase());
+                }
+            });
+            all_words = temp;
+
+            // remove duplicates and sort
+            all_words = [...new Set(all_words.sort())];
+
+            let pattern_sentence = tokenize(input);
+            console.log(pattern_sentence)
+            console.log(all_words);
+            let bag = bag_of_words(pattern_sentence, all_words);
+            console.log(bag);
+            fetch("./model.json")
+            .then(response => response.json())
+            .then(modelData => {
+                const net = new brain.NeuralNetwork();
+                net.fromJSON(modelData);
+                const output = net.run(bag);
+                console.log(output);
+                for (let j = 0; j < intents.length; j++) {               
+                    if(j == output.indexOf(Math.max(...output))) {
+                        console.log(intents[j].tag);
+                    }
+                }
+                
+            });
         });
     }
 }
