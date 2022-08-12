@@ -2,6 +2,7 @@
     "intents": [
         {
             "tag": "greeting",
+            "trigger": false,
             "patterns": [
                 "Hi",
                 "Hey",
@@ -19,6 +20,7 @@
         },
         {
             "tag": "goodbye",
+            "trigger": false,
             "patterns": [
                 "Bye",
                 "See you later",
@@ -32,6 +34,7 @@
         },
         {
             "tag": "thanks",
+            "trigger": false,
             "patterns": [
                 "Thanks",
                 "Thank you",
@@ -46,6 +49,7 @@
         },
         {
             "tag": "items",
+            "trigger": false,
             "patterns": [
                 "Which items do you have?",
                 "What kinds of items are there?",
@@ -58,6 +62,7 @@
         },
         {
             "tag": "payments",
+            "trigger": false,
             "patterns": [
                 "Do you take credit cards?",
                 "Do you accept Mastercard?",
@@ -71,6 +76,7 @@
         },
         {
             "tag": "delivery",
+            "trigger": false,
             "patterns": [
                 "How long does delivery take?",
                 "How long does shipping take?",
@@ -83,6 +89,7 @@
         },
         {
             "tag": "funny",
+            "trigger": false,
             "patterns": [
                 "Tell me a joke!",
                 "Tell me something funny!",
