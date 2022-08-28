@@ -99,6 +99,37 @@
                 "Why did the hipster burn his mouth? He drank the coffee before it was cool.",
                 "What did the buffalo say when his son left for college? Bison."
             ]
+        },
+        {
+            "tag": "open_minecraft",
+            "trigger": true,
+            "patterns": [
+                "open minecraft",
+                "can you open minecraft plz"
+            ],
+            "responses": [
+                "Opening minecraft"
+            ]
+        },
+        {
+            "tag": "weather",
+            "trigger": true,
+            "patterns": [
+                "what is the weather like",
+                "can you tell me the weather",
+                "show me the weather"
+            ],
+            "responses": false
+        },
+        {
+            "tag": "time",
+            "trigger": true,
+            "patterns": [
+                "what is the time right now",
+                "what is the time",
+                "can you tell me the time"
+            ],
+            "responses": false
         }
     ]
 }

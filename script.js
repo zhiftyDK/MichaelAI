@@ -11,28 +11,38 @@ startBtn.addEventListener("click", () => {
 });
 
 //Restart Wake word recognition when it has stopped
+let wakeWordResult = "";
 wakeWordSpeechEngine.onend = function() {
-    console.log("Ended")
-    wakeWordSpeechEngine.start();
+    console.log("Ended");
+    if(!wakeWordResult.includes("michael")) {
+        wakeWordSpeechEngine.start();
+    }
 }
 
 //Wake word recognition results
 wakeWordSpeechEngine.onresult = function(event) {
-    var result = event.results[0][0].transcript.toLowerCase();;
+    var result = event.results[0][0].transcript.toLowerCase();
     console.log(result);
-    if(result.includes("michael")){
+    wakeWordResult = result;
+    if(result.includes("michael")) {
         defaultSpeechEngine.start();
     }
 }
 
-//Default recognition results
+//Restart Wake word recognition when default recognition is done
+defaultSpeechEngine.onend = function() {
+    console.log("Ended");
+    wakeWordSpeechEngine.start();
+}
+
+//Default recognition results (Run trigger or speak response)
 defaultSpeechEngine.onresult = function(event) {
-    var result = event.results[0][0].transcript.toLowerCase();;
+    var result = event.results[0][0].transcript.toLowerCase();
     console.log(result);
-    const bot = new chatBot("./intents.json", "./model.json");
+    const bot = new chatBot("./networkdata/intents.json", "./networkdata/model.json");
     bot.run(result).then((response) => {
         if(response.trigger == true) {
-            eval(`${response.tag}("${result}")`);
+            eval(`${response.tag}(${JSON.stringify(response)}, "${result}")`);
         } else {
             speak(response.rnd_response);
         }
@@ -51,3 +61,19 @@ function speak(input) {
 }
 
 //Triggers
+function open_minecraft(response, result) {
+    speak(response.rnd_response);
+}
+
+function weather(response, result) {
+    weatherFromSentence("Silkeborg", "f4e80e2071fcae0bd7c122d2f82fd284")
+    .then(data => {
+        speak(`The temperature in ${data.city} is ${Math.floor(data.weather.main.temp)} degrees, with ${data.weather.info.description}`);
+    })
+}
+
+function time(response, result) {
+    const date = new Date();
+    const time = date.getHours() + " " + date.getMinutes();
+    speak(`the time is ${time}`);
+}
