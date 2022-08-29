@@ -6,14 +6,14 @@
             "patterns": [
                 "Hi",
                 "Hey",
-                "How are you",
                 "Is anyone there?",
                 "Hello",
-                "Good day"
+                "Good day",
+                "Good morning",
+                "Good evening"
             ],
             "responses": [
                 "Hey :-)",
-                "Hello, thanks for visiting",
                 "Hi there, what can I do for you?",
                 "Hi there, how can I help?"
             ]
@@ -24,7 +24,8 @@
             "patterns": [
                 "Bye",
                 "See you later",
-                "Goodbye"
+                "Goodbye",
+                "See you tomorrow"
             ],
             "responses": [
                 "See you later, thanks for visiting",
@@ -39,77 +40,27 @@
                 "Thanks",
                 "Thank you",
                 "That's helpful",
-                "Thank's a lot!"
+                "Thank's a lot!",
+                "Thank you for your help"
             ],
             "responses": [
                 "Happy to help!",
                 "Any time!",
-                "My pleasure"
+                "My pleasure!",
+                "Im always at your service!",
+                "Glad i could help!"
             ]
         },
         {
-            "tag": "items",
-            "trigger": false,
-            "patterns": [
-                "Which items do you have?",
-                "What kinds of items are there?",
-                "What do you sell?"
-            ],
-            "responses": [
-                "We sell coffee and tea",
-                "We have coffee and tea"
-            ]
-        },
-        {
-            "tag": "payments",
-            "trigger": false,
-            "patterns": [
-                "Do you take credit cards?",
-                "Do you accept Mastercard?",
-                "Can I pay with Paypal?",
-                "Are you cash only?"
-            ],
-            "responses": [
-                "We accept VISA, Mastercard and Paypal",
-                "We accept most major credit cards, and Paypal"
-            ]
-        },
-        {
-            "tag": "delivery",
-            "trigger": false,
-            "patterns": [
-                "How long does delivery take?",
-                "How long does shipping take?",
-                "When do I get my delivery?"
-            ],
-            "responses": [
-                "Delivery takes 2-4 days",
-                "Shipping takes 2-4 days"
-            ]
-        },
-        {
-            "tag": "funny",
-            "trigger": false,
-            "patterns": [
-                "Tell me a joke!",
-                "Tell me something funny!",
-                "Do you know a joke?"
-            ],
-            "responses": [
-                "Why did the hipster burn his mouth? He drank the coffee before it was cool.",
-                "What did the buffalo say when his son left for college? Bison."
-            ]
-        },
-        {
-            "tag": "open_minecraft",
+            "tag": "joke",
             "trigger": true,
             "patterns": [
-                "open minecraft",
-                "can you open minecraft plz"
+                "tell me a joke",
+                "tell me something funny",
+                "do you know a joke",
+                "can you tell me another joke"
             ],
-            "responses": [
-                "Opening minecraft"
-            ]
+            "responses": false
         },
         {
             "tag": "weather",
@@ -128,6 +79,39 @@
                 "what is the time right now",
                 "what is the time",
                 "can you tell me the time"
+            ],
+            "responses": false
+        },
+        {
+            "tag": "note",
+            "trigger": true,
+            "patterns": [
+                "i want to create a note",
+                "create a note",
+                "make a note",
+                "i want to create another note"
+            ],
+            "responses": false
+        },
+        {
+            "tag": "readnote",
+            "trigger": true,
+            "patterns": [
+                "read my notes",
+                "can you read out my notes",
+                "read my note",
+                "will you read out my notes"
+            ],
+            "responses": false
+        },
+        {
+            "tag": "clearnote",
+            "trigger": true,
+            "patterns": [
+                "can you clear out my notes",
+                "clear notes",
+                "clear out my notes",
+                "i want to clear my notes"
             ],
             "responses": false
         }
