@@ -1,53 +1,33 @@
 //Defining speechRecognition engine
-var wakeWordSpeechEngine = new webkitSpeechRecognition();
 var defaultSpeechEngine = new webkitSpeechRecognition();
-wakeWordSpeechEngine.lang = 'en-US';
 defaultSpeechEngine.lang = 'en-US';
 
-//Wake word
-const wakeWord = "hello michael";
+//Wake words
+const wakeWords = ["hello michael", "ok michael"];
 
 //Button to start my AI
 const startBtn = document.getElementById("startBtn");
 startBtn.addEventListener("click", () => {
-    wakeWordSpeechEngine.start();
+    defaultSpeechEngine.start();
 });
 
-//Restart Wake word recognition when it has stopped
-let wakeWordResult = "";
-wakeWordSpeechEngine.onend = function() {
-    console.log("Ended");
-    if(!wakeWordResult.includes(wakeWord)) {
-        wakeWordSpeechEngine.start();
-    }
-}
-
-//Wake word recognition results
-wakeWordSpeechEngine.onresult = function(event) {
-    var result = event.results[0][0].transcript.toLowerCase();
-    console.log(result);
-    wakeWordResult = result;
-    if(result.includes(wakeWord) && result.length > wakeWord.length) {
-        runChatBot(result);
-    } else {
-        defaultSpeechEngine.start();
-    }
-}
-
-//Restart Wake word recognition when default recognition is done
+//Restart speech engine onend
 defaultSpeechEngine.onend = function() {
     console.log("Ended");
-    wakeWordSpeechEngine.start();
+    defaultSpeechEngine.start();
 }
 
 //Default recognition results (Run trigger or speak response)
 defaultSpeechEngine.onresult = function(event) {
     var result = event.results[0][0].transcript.toLowerCase();
     console.log(result);
-    runChatBot(result);
+
+    wakeWords.forEach(element => {
+        if(result.includes(element) && result.length > element.length) {
+            runChatBot(result);
+        }
+    });
 }
-
-
 
 //Run neural net and then speak or call trigger
 function runChatBot(result) {
