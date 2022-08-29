@@ -4,6 +4,9 @@ var defaultSpeechEngine = new webkitSpeechRecognition();
 wakeWordSpeechEngine.lang = 'en-US';
 defaultSpeechEngine.lang = 'en-US';
 
+//Wake word
+const wakeWord = "hello michael";
+
 //Button to start my AI
 const startBtn = document.getElementById("startBtn");
 startBtn.addEventListener("click", () => {
@@ -14,7 +17,7 @@ startBtn.addEventListener("click", () => {
 let wakeWordResult = "";
 wakeWordSpeechEngine.onend = function() {
     console.log("Ended");
-    if(!wakeWordResult.includes("michael")) {
+    if(!wakeWordResult.includes(wakeWord)) {
         wakeWordSpeechEngine.start();
     }
 }
@@ -24,7 +27,9 @@ wakeWordSpeechEngine.onresult = function(event) {
     var result = event.results[0][0].transcript.toLowerCase();
     console.log(result);
     wakeWordResult = result;
-    if(result.includes("michael")) {
+    if(result.includes(wakeWord) && result.length > wakeWord.length) {
+        runChatBot(result);
+    } else {
         defaultSpeechEngine.start();
     }
 }
@@ -39,6 +44,13 @@ defaultSpeechEngine.onend = function() {
 defaultSpeechEngine.onresult = function(event) {
     var result = event.results[0][0].transcript.toLowerCase();
     console.log(result);
+    runChatBot(result);
+}
+
+
+
+//Run neural net and then speak or call trigger
+function runChatBot(result) {
     const bot = new chatBot("./networkdata/intents.json", "./networkdata/model.json");
     bot.run(result).then((response) => {
         if(response.trigger == true) {
