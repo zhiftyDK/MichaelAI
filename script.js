@@ -60,10 +60,6 @@ function speak(input) {
 }
 
 //Triggers
-function open_minecraft(response, result) {
-    speak(response.rnd_response);
-}
-
 function weather(response, result) {
     const city = "silkeborg";
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=f4e80e2071fcae0bd7c122d2f82fd284`)
