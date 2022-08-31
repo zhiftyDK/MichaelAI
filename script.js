@@ -29,8 +29,11 @@ defaultSpeechEngine.onresult = function(event) {
 
     for (let i = 0; i < wakeWords.length; i++) {
         const element = wakeWords[i];
-        if(result.includes(element) && result.length > element.length) {
-            runChatBot(result);
+        console.log(result.length, element.length);
+        if(result.includes(element)) {
+            if(result.length > element.length) {
+                runChatBot(result.replace(element, "").trim());
+            }
             break;
         }
     }
@@ -95,7 +98,7 @@ function note(response, result) {
         var result = event.results[0][0].transcript.toLowerCase();
         console.log(result);
         notes.push(result);
-        speak("note is created");
+        speak("note has been created");
         console.log(notes);
         reply = false;
         defaultSpeechEngine.start();
@@ -107,12 +110,12 @@ function readnote(response, result) {
         if(notes.length == 1) {
             speak(`you currently have ${notes.length} note`);
             notes.forEach((note, i) => {
-                speak(`the note is ${note}`);
+                speak(`the note is, ${note}`);
             });
         } else {
             speak(`you currently have ${notes.length} notes`);
             notes.forEach((note, i) => {
-                speak(`number ${i + 1} note is ${note}`);
+                speak(`number ${i + 1} note is, ${note}`);
             });
         }
     } else {
@@ -133,3 +136,54 @@ function joke() {
         speak(data.delivery);
     })
 }
+
+function compounds(response, result) {
+    if(result.includes("consist")) {
+        let compoundName = result.split(" ");
+        compoundName = compoundName[compoundName.indexOf("consist") - 1];
+
+        fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${compoundName}/property/MolecularFormula/json`)
+        .then(response => response.json())
+        .then(data => {
+            let molecularFormula = data.PropertyTable.Properties[0].MolecularFormula;
+            const characters = molecularFormula.replace(/(\d+)/, "").split(/(?=[A-Z])/);
+    
+            fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${compoundName}/property/MolecularWeight/json`)
+            .then(response => response.json())
+            .then(data => {
+                let molarmass = data.PropertyTable.Properties[0].MolecularWeight;
+    
+                fetch("https://raw.githubusercontent.com/Bowserinator/Periodic-Table-JSON/master/PeriodicTableJSON.json")
+                .then(response => response.json())
+                .then(data => {
+                    let elementSentence = `${compoundName} consists of`;
+                    data.elements.forEach(element => {
+                        characters.forEach(char => {
+                            if(element.symbol == char) {
+                                elementSentence = elementSentence + ", " + element.name;
+                            }
+                        });
+                    });
+                    elementSentence = elementSentence + `. the molar mass of ${compoundName} is about ${parseInt(molarmass)} g/mol`;
+                    elementSentence = elementSentence.substring(0, elementSentence.lastIndexOf(',')) + " and" + elementSentence.substring(elementSentence.lastIndexOf(',')+1);
+                    elementSentence = elementSentence + `. the molecular formula of ${compoundName} is ${molecularFormula.split(/(?=[A-Z])/).join(" ")}`;
+                    console.log(elementSentence);
+                    speak(elementSentence);
+                });
+            });
+        }).catch(error => {
+            speak(`It seams that the compound ${compoundName} doesnt exist`);
+        });
+    } else {
+        speak("I cannot compute that sentence sir")
+    }
+}
+
+// {
+//     "Properties": [
+//         {
+//             "CID": 5793,
+//             "MolecularFormula": "C6H12O6"
+//         }
+//     ]
+// }

@@ -114,6 +114,16 @@
                 "i want to clear my notes"
             ],
             "responses": false
+        },
+        {
+            "tag": "compounds",
+            "trigger": true,
+            "patterns": [
+                "what elements does consist of",
+                "what does consist of",
+                "do you know what consist of"
+            ],
+            "responses": false
         }
     ]
 }
