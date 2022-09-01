@@ -179,6 +179,32 @@ function compounds(response, result) {
     }
 }
 
+function togglelights(response, result) {
+    if(result.includes("off")) {
+        const ids = [1, 2];
+        ids.forEach(id => {
+            fetch(`https://192.168.1.210/api/k0eIBlxj9p9AM5SMpWf9JhSQgM53dRNz33yCUxAF/lights/${id}/state`, {
+                method: "PUT",
+                body: JSON.stringify({"on": false}),
+            })
+            .then(response => response.json())
+            .then(data => console.log(data)); 
+        });
+        speak("I have turned your lights off")
+    } else {
+        const ids = [1, 2];
+        ids.forEach(id => {
+            fetch(`https://192.168.1.210/api/k0eIBlxj9p9AM5SMpWf9JhSQgM53dRNz33yCUxAF/lights/${id}/state`, {
+                method: "PUT",
+                body: JSON.stringify({"on": true}),
+            })
+            .then(response => response.json())
+            .then(data => console.log(data)); 
+        });
+        speak("I have turned your lights on")
+    }
+}
+
 // {
 //     "Properties": [
 //         {

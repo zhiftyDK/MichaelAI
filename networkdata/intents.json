@@ -124,6 +124,21 @@
                 "do you know what consist of"
             ],
             "responses": false
+        },
+        {
+            "tag": "togglelights",
+            "trigger": true,
+            "patterns": [
+                "can you turn my lights",
+                "change my lights to",
+                "change my lights to off",
+                "change my lights to on",
+                "can you turn my lights off",
+                "can you turn my lights on",
+                "can you turn off my lights",
+                "can you turn on my lights"
+            ],
+            "responses": false
         }
     ]
 }
