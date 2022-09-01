@@ -181,7 +181,25 @@ function compounds(response, result) {
 }
 
 function togglelights(response, result) {
-    if(result.includes("off")) {
+    if(result.includes("%")) {
+        const bri = result.substring(0, result.indexOf("%")).split(" ")[result.substring(0, result.indexOf("%")).split(" ").length - 1];
+        console.log(bri);
+
+        const ids = [1, 2];
+        ids.forEach(id => {
+            fetch(`https://192.168.1.210/api/k0eIBlxj9p9AM5SMpWf9JhSQgM53dRNz33yCUxAF/lights/${id}/state`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    "on": true,
+                    "bri": parseInt(254 / 100 * bri)
+                }),
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.log(error)); 
+        });
+        speak(`Your lights is now at ${bri}% brightness`)
+    } else if(result.includes("off")) {
         const ids = [1, 2];
         ids.forEach(id => {
             fetch(`https://192.168.1.210/api/k0eIBlxj9p9AM5SMpWf9JhSQgM53dRNz33yCUxAF/lights/${id}/state`, {
@@ -191,26 +209,37 @@ function togglelights(response, result) {
             .then(response => response.json())
             .then(data => console.log(data)); 
         });
-        speak("I have turned your lights off")
+        speak("I have turned your lights off");
     } else {
         const ids = [1, 2];
         ids.forEach(id => {
             fetch(`https://192.168.1.210/api/k0eIBlxj9p9AM5SMpWf9JhSQgM53dRNz33yCUxAF/lights/${id}/state`, {
                 method: "PUT",
-                body: JSON.stringify({"on": true}),
+                body: JSON.stringify({"on": true, "bri": 254}),
             })
             .then(response => response.json())
             .then(data => console.log(data)); 
         });
-        speak("I have turned your lights on")
+        speak("I have turned your lights on");
     }
 }
 
-// {
-//     "Properties": [
-//         {
-//             "CID": 5793,
-//             "MolecularFormula": "C6H12O6"
-//         }
-//     ]
-// }
+function togglefan(response, result) {
+    if(result.includes("off")) {
+        fetch(`https://192.168.1.210/api/k0eIBlxj9p9AM5SMpWf9JhSQgM53dRNz33yCUxAF/lights/3/state`, {
+            method: "PUT",
+            body: JSON.stringify({"on": false}),
+        })
+        .then(response => response.json())
+        .then(data => console.log(data));
+        speak("I have turned your fan off")
+    } else {
+        fetch(`https://192.168.1.210/api/k0eIBlxj9p9AM5SMpWf9JhSQgM53dRNz33yCUxAF/lights/3/state`, {
+            method: "PUT",
+            body: JSON.stringify({"on": true}),
+        })
+        .then(response => response.json())
+        .then(data => console.log(data));
+        speak("I have turned your fan on");
+    }
+}

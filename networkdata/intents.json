@@ -136,7 +136,24 @@
                 "can you turn my lights off",
                 "can you turn my lights on",
                 "can you turn off my lights",
-                "can you turn on my lights"
+                "can you turn on my lights",
+                "its too dark",
+                "its dark in here"
+            ],
+            "responses": false
+        },
+        {
+            "tag": "togglefan",
+            "trigger": true,
+            "patterns": [
+                "can you turn my fan",
+                "change my fan to",
+                "change my fan to off",
+                "change my fan to on",
+                "can you turn my fan off",
+                "can you turn my fan on",
+                "can you turn off my fan",
+                "can you turn on my fan"
             ],
             "responses": false
         }

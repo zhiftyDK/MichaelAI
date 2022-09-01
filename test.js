@@ -17,5 +17,5 @@ function toggleFan(state) {
         body: JSON.stringify({"on": state}),
     })
     .then(response => response.json())
-    .then(data => console.log(data)); 
+    .then(data => console.log(data));
 }
