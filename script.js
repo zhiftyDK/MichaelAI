@@ -29,7 +29,6 @@ defaultSpeechEngine.onresult = function(event) {
 
     for (let i = 0; i < wakeWords.length; i++) {
         const element = wakeWords[i];
-        console.log(result.length, element.length);
         if(result.includes(element)) {
             if(result.length > element.length) {
                 runChatBot(result.replace(element, "").trim());
@@ -146,7 +145,8 @@ function compounds(response, result) {
         .then(response => response.json())
         .then(data => {
             let molecularFormula = data.PropertyTable.Properties[0].MolecularFormula;
-            const characters = molecularFormula.replace(/(\d+)/, "").split(/(?=[A-Z])/);
+            const characters = molecularFormula.replace(/(\d+)/g, "").split(/(?=[A-Z])/);
+            console.log(characters);
     
             fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${compoundName}/property/MolecularWeight/json`)
             .then(response => response.json())
@@ -173,6 +173,7 @@ function compounds(response, result) {
             });
         }).catch(error => {
             speak(`It seams that the compound ${compoundName} doesnt exist`);
+            console.log(error);
         });
     } else {
         speak("I cannot compute that sentence sir")
